@@ -60,7 +60,7 @@ type AutoPreprocessOptions = {
 export const transform = async (
   name: string,
   options: TransformerOptions,
-  { content, map, filename, attributes }: TransformerArgs<any>,
+  { content, source, map, filename, attributes }: TransformerArgs<any>,
 ): Promise<Processed> => {
   if (options === false) {
     return { code: content };
@@ -75,6 +75,7 @@ export const transform = async (
 
   return transformer({
     content,
+    source,
     filename,
     map,
     attributes,
@@ -151,6 +152,7 @@ export function sveltePreprocess(
   ): Preprocessor => async (svelteFile) => {
     let {
       content,
+      source,
       filename,
       lang,
       alias,
@@ -187,6 +189,7 @@ export function sveltePreprocess(
 
     const transformed = await transform(lang, transformerOptions, {
       content,
+      source,
       filename,
       attributes,
     });
@@ -205,6 +208,7 @@ export function sveltePreprocess(
     if (transformers.replace) {
       const transformed = await transform('replace', transformers.replace, {
         content,
+        source: content,
         filename,
       });
 
@@ -221,11 +225,13 @@ export function sveltePreprocess(
   const script: PreprocessorGroup['script'] = async ({
     content,
     attributes,
+    source,
     filename,
   }) => {
     const transformResult: Processed = await scriptTransformer({
       content,
       attributes,
+      source,
       filename,
     });
 
@@ -235,7 +241,7 @@ export function sveltePreprocess(
       const transformed = await transform(
         'babel',
         getTransformerOptions('babel'),
-        { content: code, map, filename, attributes },
+        { content: code, source, map, filename, attributes },
       );
 
       code = transformed.code;
@@ -250,11 +256,13 @@ export function sveltePreprocess(
   const style: PreprocessorGroup['style'] = async ({
     content,
     attributes,
+    source,
     filename,
   }) => {
     const transformResult = await cssTransformer({
       content,
       attributes,
+      source,
       filename,
     });
 
@@ -275,6 +283,7 @@ export function sveltePreprocess(
 
         const transformed = await transform('postcss', postcssOptions, {
           content: code,
+          source,
           map,
           filename,
           attributes,
@@ -288,7 +297,7 @@ export function sveltePreprocess(
       const transformed = await transform(
         'globalStyle',
         getTransformerOptions('globalStyle'),
-        { content: code, map, filename, attributes },
+        { content: code, source, map, filename, attributes },
       );
 
       code = transformed.code;

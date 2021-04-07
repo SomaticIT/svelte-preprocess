@@ -8,6 +8,7 @@ export default (options?: Options.Typescript): PreprocessorGroup => ({
     const { transformer } = await import('../transformers/typescript');
     let {
       content,
+      source,
       filename,
       attributes,
       lang,
@@ -22,6 +23,7 @@ export default (options?: Options.Typescript): PreprocessorGroup => ({
 
     const transformed = await transformer({
       content,
+      source,
       filename,
       attributes,
       options,
