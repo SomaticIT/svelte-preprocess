@@ -3,6 +3,7 @@ import { dirname, isAbsolute, join } from 'path';
 import ts from 'typescript';
 
 import { throwTypescriptError } from '../modules/errors';
+import { generateTemplateCode } from '../modules/generateTemplateCode';
 import type { Transformer, Options } from '../types';
 
 type CompilerOptions = Options.Typescript['compilerOptions'];
@@ -51,6 +52,36 @@ const importTransformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
   };
 
   return (node) => ts.visitNode(node, visit);
+};
+
+const getContentToCompile = ({
+  content,
+  source,
+  filename,
+}: {
+  content: string;
+  source?: string;
+  filename?: string;
+}) => {
+  if (source) {
+    const tplCode = generateTemplateCode({ source, filename });
+
+    return `${content}\nlet $$$$$$$;\n${tplCode}`;
+  }
+
+  return content;
+};
+
+const stripsTemplateCode = ({
+  compiledCode,
+  source,
+}: {
+  compiledCode: string;
+  source?: string;
+}) => {
+  if (!source) return compiledCode;
+
+  return compiledCode.slice(0, compiledCode.indexOf('let $$$$$$$;'));
 };
 
 export function loadTsconfig(
@@ -103,6 +134,7 @@ export function loadTsconfig(
 const transformer: Transformer<Options.Typescript> = ({
   content,
   filename,
+  source,
   options = {},
 }) => {
   // default options
@@ -140,16 +172,14 @@ const transformer: Transformer<Options.Typescript> = ({
   }
 
   const {
-    outputText: code,
+    outputText: compiledCode,
     sourceMapText: map,
     diagnostics,
-  } = ts.transpileModule(content, {
+  } = ts.transpileModule(getContentToCompile({ content, source, filename }), {
     fileName: filename,
     compilerOptions,
     reportDiagnostics: options.reportDiagnostics !== false,
-    transformers: {
-      before: [importTransformer],
-    },
+    transformers: source ? {} : { before: [importTransformer] },
   });
 
   if (diagnostics.length > 0) {
@@ -166,6 +196,8 @@ const transformer: Transformer<Options.Typescript> = ({
       throwTypescriptError();
     }
   }
+
+  const code = stripsTemplateCode({ compiledCode, source });
 
   return {
     code,

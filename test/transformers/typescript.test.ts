@@ -111,6 +111,15 @@ describe('transformer - typescript', () => {
       return expect(code).toContain(getFixtureContent('script.js'));
     });
 
+    it('should strip unused and type imports', async () => {
+      const tpl = getFixtureContent('TypeScriptTransformer.svelte');
+
+      const opts = sveltePreprocess({ typescript: { tsconfigFile: false } });
+      const { code } = await preprocess(tpl, opts);
+
+      return expect(code).toContain(`import { AValue } from "./types";`);
+    });
+
     it('supports extends field', () => {
       const { options } = loadTsconfig({}, getTestAppFilename(), {
         tsconfigFile: './test/fixtures/tsconfig.extends1.json',
