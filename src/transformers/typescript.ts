@@ -56,15 +56,15 @@ const importTransformer: ts.TransformerFactory<ts.SourceFile> = (context) => {
 
 const getContentToCompile = ({
   content,
-  source,
+  markup,
   filename,
 }: {
   content: string;
-  source?: string;
+  markup?: string;
   filename?: string;
 }) => {
-  if (source) {
-    const tplCode = generateTemplateCode({ source, filename });
+  if (markup) {
+    const tplCode = generateTemplateCode({ markup, filename });
 
     return `${content}\nlet $$$$$$$;\n${tplCode}`;
   }
@@ -74,12 +74,12 @@ const getContentToCompile = ({
 
 const stripsTemplateCode = ({
   compiledCode,
-  source,
+  markup,
 }: {
   compiledCode: string;
-  source?: string;
+  markup?: string;
 }) => {
-  if (!source) return compiledCode;
+  if (!markup) return compiledCode;
 
   return compiledCode.slice(0, compiledCode.indexOf('let $$$$$$$;'));
 };
@@ -134,7 +134,7 @@ export function loadTsconfig(
 const transformer: Transformer<Options.Typescript> = ({
   content,
   filename,
-  source,
+  markup,
   options = {},
 }) => {
   // default options
@@ -175,11 +175,11 @@ const transformer: Transformer<Options.Typescript> = ({
     outputText: compiledCode,
     sourceMapText: map,
     diagnostics,
-  } = ts.transpileModule(getContentToCompile({ content, source, filename }), {
+  } = ts.transpileModule(getContentToCompile({ content, markup, filename }), {
     fileName: filename,
     compilerOptions,
     reportDiagnostics: options.reportDiagnostics !== false,
-    transformers: source ? {} : { before: [importTransformer] },
+    transformers: markup ? {} : { before: [importTransformer] },
   });
 
   if (diagnostics.length > 0) {
@@ -197,7 +197,7 @@ const transformer: Transformer<Options.Typescript> = ({
     }
   }
 
-  const code = stripsTemplateCode({ compiledCode, source });
+  const code = stripsTemplateCode({ compiledCode, markup });
 
   return {
     code,

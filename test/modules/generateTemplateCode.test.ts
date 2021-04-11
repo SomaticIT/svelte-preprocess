@@ -3,10 +3,10 @@ import { generateTemplateCode } from '../../src/modules/generateTemplateCode';
 
 describe('generateTemplateCode', () => {
   it('should transform markup ast to plain javascript', async () => {
-    const source = getFixtureContent('TypeScriptTransformer.svelte');
+    const markup = getFixtureContent('TypeScriptTransformer.svelte');
 
     const code = generateTemplateCode({
-      source,
+      markup,
       filename: getTestAppFilename(),
     });
 

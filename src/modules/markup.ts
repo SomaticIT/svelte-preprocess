@@ -19,7 +19,7 @@ export async function transformMarkup(
   if (!templateMatch) {
     return transformer({
       content,
-      source: content,
+      markup: content,
       attributes: {},
       filename,
       options,
@@ -44,7 +44,7 @@ export async function transformMarkup(
   /** Transform the found template code */
   let { code, map, dependencies } = await transformer({
     content: templateCode,
-    source: templateCode,
+    markup: templateCode,
     attributes,
     filename,
     options,

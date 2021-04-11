@@ -258,20 +258,20 @@ function generateNode(markup: string, root: TemplateNode): string {
 }
 
 export type AstOptions = {
-  source: string;
+  markup: string;
   filename?: string;
 };
 
-export function generateTemplateCode({ source, filename }: AstOptions): string {
-  const markup = stripTags(source);
-  const ast = parse(markup, { filename });
+export function generateTemplateCode({ markup, filename }: AstOptions): string {
+  const template = stripTags(markup);
+  const ast = parse(template, { filename });
 
-  return generateNode(markup, ast.html);
+  return generateNode(template, ast.html);
 }
 
-export function printAst({ source, filename }: AstOptions): string {
-  const markup = stripTags(source);
-  const ast = parse(markup, { filename });
+export function printAst({ markup, filename }: AstOptions): string {
+  const template = stripTags(markup);
+  const ast = parse(template, { filename });
 
   const tree: string[] = [];
   let level = 0;
