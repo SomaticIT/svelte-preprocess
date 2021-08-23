@@ -450,7 +450,7 @@ const transformer: Transformer<Options.Typescript> = async ({
 
   const compilerOptions = getCompilerOptions({ filename, options, basePath });
 
-  return options.useAdvancedImportTranspiler
+  return options.handleMixedImports
     ? advancedImportTranspiler({
         content,
         filename,
