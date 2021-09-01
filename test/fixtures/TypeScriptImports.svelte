@@ -4,7 +4,7 @@
     import Nested from "./Nested.svelte";
     import { hello } from "./script";
     import { AValue, AType } from "./types";
-    import { storeTemplateOnly } from "./store";
+    import { storeTemplateOnly, storeCodeOnly } from "./store";
     const ui = { MyNested: Nested };
     const val: AType = "test1";
     const prom: Promise<AType> = Promise.resolve("test2");
@@ -21,6 +21,8 @@
     
     let scrollY = 500;
     let innerWidth = 500;
+
+    $: storeCode = $storeCodeOnly;
     
     const duration = 200;
     function onKeyDown(e: KeyboardEvent): void {
@@ -40,6 +42,7 @@
 </svelte:head>
 
 {$storeTemplateOnly}
+{storeCode}
 
 <div>
     <Nested let:var1 let:var2={var3}>

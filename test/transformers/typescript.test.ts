@@ -125,7 +125,9 @@ describe('transformer - typescript', () => {
       expect(code).toContain(`import Nested from "./Nested.svelte"`);
       expect(code).toContain(`import { hello } from "./script"`);
       expect(code).toContain(`import { AValue } from "./types"`);
-      expect(code).toContain(`import { storeTemplateOnly } from "./store"`);
+      expect(code).toContain(
+        `import { storeTemplateOnly, storeCodeOnly } from "./store"`,
+      );
     });
 
     it('should deal with empty transpilation result', async () => {
