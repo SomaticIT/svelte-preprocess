@@ -93,7 +93,7 @@ describe('transformer - typescript', () => {
         },
       });
 
-      expect(preprocess(template, opts)).rejects.toThrow('TS6046');
+      return expect(preprocess(template, opts)).rejects.toThrow('TS6046');
     });
 
     it('should transpile ts to js', async () => {
@@ -128,6 +128,7 @@ describe('transformer - typescript', () => {
       expect(code).toContain(
         `import { storeTemplateOnly, storeCodeOnly } from "./store"`,
       );
+      expect(code).not.toContain(`undefined`);
     });
 
     it('should deal with empty transpilation result', async () => {

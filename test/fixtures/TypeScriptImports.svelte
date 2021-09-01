@@ -41,9 +41,6 @@
     <title>Title: {val}</title>
 </svelte:head>
 
-{$storeTemplateOnly}
-{storeCode}
-
 <div>
     <Nested let:var1 let:var2={var3}>
         <Nested bind:this={nested} />
@@ -113,3 +110,10 @@
     {@html val}
     {@debug val, inputVal}
 </div>
+
+<div>
+    {$storeTemplateOnly}
+    {storeCode}
+</div>
+
+<!-- Some comment -->
